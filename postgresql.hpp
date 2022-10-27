@@ -6,12 +6,17 @@
 #define ORM_POSTGRESQL_HPP
 
 #include <string>
+#include <climits>
+#include <vector>
 #include <type_traits>
 #ifdef _MSC_VER
 #include <include/libpq-fe.h>
 #else
 #include <postgresql/libpq-fe.h>
 #endif
+
+#include "utility.hpp"
+#include "iguana/iguana/reflection.hpp"
 
 using namespace std::string_literals;
 

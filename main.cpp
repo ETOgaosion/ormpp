@@ -66,7 +66,7 @@ const char *ip = "127.0.0.1"; // your database ip
 // TEST_CASE(mysql_performance){
 //    dbng<mysql> mysql;
 //
-//    TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+//    TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
 //    TEST_REQUIRE(mysql.execute("DROP TABLE IF EXISTS student"));
 //
 //    ormpp_auto_increment_key auto_key{"code"};
@@ -105,20 +105,14 @@ struct dummy {
 };
 REFLECTION(dummy, id, name);
 
-TEST_CASE(mysql_exist_tb) {
-  dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb", /*timeout_seconds=*/5, 3306));
-  dummy d{ 0, "tom" };
-  dummy d1{ 0, "jerry" };
-  mysql.insert(d);
-  mysql.insert(d1);
-  auto v = mysql.query<dummy>("limit 1, 1");
-  std::cout << v.size() << "\n";
+TEST_CASE(pgsql_exist_tb) {
+  dbng<postgresql> sql;
+  TEST_REQUIRE(sql.connect(ip, "BlueSpace", "955885", "BlueSpace", /*timeout_seconds=*/5, 5432));
 }
 
-TEST_CASE(mysql_pool) {
+TEST_CASE(pgsql_pool) {
   //	dbng<sqlite> sqlite;
-  //	sqlite.connect("testdb");
+  //	sqlite.connect("BlueSpace");
   //	sqlite.create_datatable<test_tb>(ormpp_unique{ "name" });
   //	test_tb tb{ 1, "aa" };
   //	sqlite.insert(tb);
@@ -126,7 +120,7 @@ TEST_CASE(mysql_pool) {
   //	auto vt1 = sqlite.query<std::tuple<test_tb>>("select * from test_tb");
   //    auto& pool = connection_pool<dbng<mysql>>::instance();
   //    try {
-  //        pool.init(1, ip, "root", "12345", "testdb", 2);
+  //        pool.init(1, ip, "BlueSpace", "955885", "BlueSpace", 2);
   //    }catch(const std::exception& e){
   //        std::cout<<e.what()<<std::endl;
   //        return;
@@ -174,8 +168,8 @@ TEST_CASE(test_ormpp_cfg) {
 TEST_CASE(postgres_pool) {
   auto &pool = connection_pool<dbng<postgresql>>::instance();
   try {
-    pool.init(3, ip, "root", "12345", "testdb", 2);
-    pool.init(7, ip, "root", "12345", "testdb", 2);
+    pool.init(3, ip, "BlueSpace", "955885", "BlueSpace", 2, 5432);
+    pool.init(7, ip, "BlueSpace", "955885", "BlueSpace", 2, 5432);
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
     return;
@@ -215,16 +209,16 @@ TEST_CASE(orm_connect) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.disconnect());
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb", timeout));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace", timeout));
 #endif
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.disconnect());
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb", timeout));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace", timeout));
 #endif
 
 #ifdef ORMPP_ENABLE_SQLITE3
@@ -241,7 +235,7 @@ TEST_CASE(orm_create_table) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<person>());
   TEST_REQUIRE(postgres.create_datatable<person>(key));
   TEST_REQUIRE(postgres.create_datatable<person>(not_null));
@@ -267,7 +261,7 @@ TEST_CASE(orm_create_table) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<person>());
   TEST_REQUIRE(mysql.create_datatable<person>(key));
   TEST_REQUIRE(mysql.create_datatable<person>(not_null));
@@ -291,7 +285,7 @@ TEST_CASE(orm_insert_query) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   auto vv0 = mysql.query(FID(simple::id), "<", "5");
   auto vv = mysql.query(FID(simple::id), "<", 5);
   auto vv3 = mysql.query(FID(person::name), "<", "5");
@@ -302,7 +296,7 @@ TEST_CASE(orm_insert_query) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   auto vv1 = postgres.query(FID(simple::id), "<", "5");
 #endif
 
@@ -398,7 +392,7 @@ TEST_CASE(orm_update) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
   TEST_CHECK(mysql.insert(v) == 3);
 
@@ -413,7 +407,7 @@ TEST_CASE(orm_update) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_CHECK(postgres.insert(v) == 3);
   TEST_CHECK(postgres.update(v[0]) == 1);
@@ -446,7 +440,7 @@ TEST_CASE(orm_multi_update) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
   TEST_CHECK(mysql.insert(v) == 3);
   v[0].name = "test1";
@@ -470,7 +464,7 @@ TEST_CASE(orm_multi_update) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_CHECK(postgres.insert(v) == 3);
   TEST_CHECK(postgres.update(v) == 3);
@@ -491,7 +485,7 @@ TEST_CASE(orm_delete) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
   TEST_CHECK(mysql.insert(v) == 3);
   TEST_REQUIRE(mysql.delete_records<student>("code=1"));
@@ -503,7 +497,7 @@ TEST_CASE(orm_delete) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_CHECK(postgres.insert(v) == 3);
   TEST_REQUIRE(postgres.delete_records<student>("code=1"));
@@ -535,7 +529,7 @@ TEST_CASE(orm_query) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<simple>(key));
   TEST_CHECK(mysql.insert(v) == 3);
   auto result = mysql.query<simple>();
@@ -557,7 +551,7 @@ TEST_CASE(orm_query) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<simple>(key));
   TEST_CHECK(postgres.insert(v) == 3);
   auto result1 = postgres.query<simple>();
@@ -579,7 +573,7 @@ TEST_CASE(orm_query_some) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
   TEST_CHECK(mysql.insert(v) == 3);
   auto result3 = mysql.query<std::tuple<int>>("select count(1) from student");
@@ -600,7 +594,7 @@ TEST_CASE(orm_query_some) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_CHECK(postgres.insert(v) == 3);
   auto result1 = postgres.query<std::tuple<int, std::string, double>>(
@@ -637,7 +631,7 @@ TEST_CASE(orm_query_multi_table) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
   TEST_CHECK(mysql.insert(v) == 3);
   TEST_REQUIRE(mysql.create_datatable<person>(key1, not_null));
@@ -652,12 +646,12 @@ TEST_CASE(orm_query_multi_table) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_CHECK(postgres.insert(v) == 3);
   TEST_REQUIRE(postgres.create_datatable<person>(key1, not_null));
   TEST_CHECK(postgres.insert(v1) == 3);
-  TEST_CHECK(sqlite.insert(v1) == 3);
+  TEST_CHECK(postgres.insert(v1) == 3);
   auto result1 = postgres.query<std::tuple<int, std::string, double>>(
       "select person.*, student.name, student.age from person, student"s);
   TEST_CHECK(result1.size() == 9);
@@ -693,7 +687,7 @@ TEST_CASE(orm_transaction) {
 
 #ifdef ORMPP_ENABLE_MYSQL
   dbng<mysql> mysql;
-  TEST_REQUIRE(mysql.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(mysql.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(mysql.create_datatable<student>(key, not_null));
 
   TEST_REQUIRE(mysql.begin());
@@ -711,7 +705,7 @@ TEST_CASE(orm_transaction) {
 
 #ifdef ORMPP_ENABLE_PG
   dbng<postgresql> postgres;
-  TEST_REQUIRE(postgres.connect(ip, "root", "12345", "testdb"));
+  TEST_REQUIRE(postgres.connect(ip, "BlueSpace", "955885", "BlueSpace"));
   TEST_REQUIRE(postgres.create_datatable<student>(key, not_null));
   TEST_REQUIRE(postgres.begin());
   for (int i = 0; i < 10; ++i) {
@@ -770,8 +764,8 @@ struct validate {
 
 TEST_CASE(orm_aop) {
   // dbng<mysql> mysql;
-  // auto r = mysql.wraper_connect<log, validate>("127.0.0.1", "root", "12345",
-  // "testdb"); TEST_REQUIRE(r);
+  // auto r = mysql.wraper_connect<log, validate>("127.0.0.1", "BlueSpace", "955885",
+  // "BlueSpace"); TEST_REQUIRE(r);
 
   // r = mysql.wraper_execute("drop table if exists person");
   // TEST_REQUIRE(r);

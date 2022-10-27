@@ -6,7 +6,7 @@
 #define ORMPP_CONFIG_MANAGER_HPP
 
 #include <fstream>
-#include <iguana/json.hpp>
+#include "iguana/iguana/json.hpp"
 #include <string>
 #include <string_view>
 
